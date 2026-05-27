@@ -1,0 +1,16 @@
+{
+  "scores": [
+    {
+      "username": "e",
+      "points": 3,
+      "id": "ygwqtHTyB3s"
+    },
+    {
+      "username": "dyego",
+      "points": 5,
+      "id": "5XTObMIuzGI"
+    }
+  ],
+  "timedscores": [],
+  "$schema": "./node_modules/json-server/schema.json"
+}

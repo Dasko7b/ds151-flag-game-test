@@ -17,7 +17,7 @@ const HomeScreen = () => {
           onChangeText={(t) => setUsername(t)}
         />
         <Button 
-          title="Iniciar"
+          title="Modo normal"
           color="#0a0"
           disabled={username === ''}
           onPress={() => {
@@ -27,6 +27,31 @@ const HomeScreen = () => {
             });
           }}
         />
+
+        <Button 
+          title="Modo tempo"
+          color="#0a0"
+          disabled={username === ''}
+          onPress={() => {
+            router.push({
+              pathname: '/gameTemp',
+              params: { username: username }
+            });
+          }}
+        />
+
+        <Button 
+          title="Placar"
+          color="#666666"
+          onPress={() => {
+            router.push({
+              pathname: '/resultados',
+            });
+          }}
+        />
+
+
+
       </View>
     </View>
   );
