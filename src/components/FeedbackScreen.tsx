@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { api } from '../api/api';
 
 type Status = 'hit' | 'miss' | 'end';
 
@@ -22,43 +23,45 @@ export const FeedbackScreen = ({
   onRestart,
   onQuit
 }: FeedbackScreenProps) => {
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    const sendScore = async () => {
-      if (status !== 'end') return;
+  const enviarScoreDados = async (
+    username?: string,
+    points?: number
+  ) => {
+    setIsLoading(true);
+    try {
+      const endpoint = '/scores';
+      const response = await api.post(endpoint, {
+        username,
+        points
+      });
+      console.log('Dados enviados:', response.data);
+    } catch (error) {
+      console.error('Erro ao enviar:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-      try {
-        const response = await fetch('http://localhost:3000/scores', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            username,
-            points,
-          }),
-        });
+  const finalizarRestart = async () => {
+    await enviarScoreDados('', username, points);
+    onRestart?.();
+  };
 
-        const data = await response.json();
-        console.log('Score enviado:', data);
-      } catch (error) {
-        console.error('Erro ao enviar score:', error);
-      }
-    };
-
-    sendScore();
-  }, [status]);
+  const finalizarQuit = async () => {
+    await enviarScoreDados('', username, points);
+    onQuit?.();
+  };
 
   if (status === 'end') {
     return (
       <SafeAreaView style={[styles.resultContainer, styles.endContainer]}>
         <Text style={styles.resultText}>Fim de jogo!</Text>
-
         <View style={{ flex: 2, alignItems: 'center' }}>
           <Text style={styles.resultText}>{username}</Text>
           <Text style={styles.resultText}>{points} pontos!</Text>
         </View>
-
         <View
           style={{
             flex: 1,
@@ -67,11 +70,20 @@ export const FeedbackScreen = ({
           }}
         >
           <View style={{ paddingHorizontal: 10 }}>
-            <Button title="Recomeçar" onPress={onRestart} />
+            <Button
+              title={isLoading ? 'Enviando...' : 'Recomeçar'}
+              onPress={finalizarRestart}
+              disabled={isLoading}
+            />
           </View>
 
           <View style={{ paddingHorizontal: 10 }}>
-            <Button title="Encerrar" color="red" onPress={onQuit} />
+            <Button
+              title={isLoading ? 'Enviando...' : 'Encerrar'}
+              color="red"
+              onPress={finalizarQuit}
+              disabled={isLoading}
+            />
           </View>
         </View>
       </SafeAreaView>
@@ -79,9 +91,15 @@ export const FeedbackScreen = ({
   }
 
   const isHit = status === 'hit';
-  const containerStyle = isHit ? styles.hitContainer : styles.missContainer;
+
+  const containerStyle = isHit
+    ? styles.hitContainer
+    : styles.missContainer;
+
   const iconName = isHit ? 'check' : 'close';
+
   const buttonColor = isHit ? 'green' : 'red';
+
   const message = isHit ? 'Acertou!' : 'Errou!';
 
   return (
@@ -111,15 +129,19 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     padding: 40,
   },
+
   hitContainer: {
     backgroundColor: 'lightgreen',
   },
+
   missContainer: {
     backgroundColor: 'orangered',
   },
+
   endContainer: {
     backgroundColor: 'lightblue',
   },
+
   resultText: {
     fontSize: 40,
     fontWeight: 'bold',
