@@ -45,12 +45,12 @@ export const FeedbackScreen = ({
   };
 
   const finalizarRestart = async () => {
-    await enviarScoreDados('', username, points);
+    await enviarScoreDados(username, points);
     onRestart?.();
   };
 
   const finalizarQuit = async () => {
-    await enviarScoreDados('', username, points);
+    await enviarScoreDados(username, points);
     onQuit?.();
   };
 
