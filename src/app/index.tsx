@@ -22,7 +22,7 @@ const HomeScreen = () => {
           disabled={username === ''}
           onPress={() => {
             router.push({
-              pathname: '/game',
+              pathname: '/game-timed',
               params: { username: username }
             });
           }}
