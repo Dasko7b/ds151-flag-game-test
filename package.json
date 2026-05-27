@@ -11,6 +11,7 @@
     "@expo/metro-runtime": "~56.0.13",
     "@expo/vector-icons": "^15.0.2",
     "@types/react": "~19.2.14",
+    "axios": "^1.16.1",
     "expo": "^56.0.5",
     "expo-constants": "~56.0.16",
     "expo-font": "~56.0.5",
